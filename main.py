@@ -77,7 +77,7 @@ def make_donation(token):
         'x-wp-nonce': os.getenv('WP_NONCE'),
     }
     data = {
-        'amount': 10,
+        'amount': 1,
         'first': 'Adi',
         'last': 'Singh',
         'reoccurance': 0,
