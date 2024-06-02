@@ -121,7 +121,7 @@ def main():
     max_workers = 5  # Number of threads to use
     duration = 60  # Run time in seconds (3 minutes)
     start_time = time.time()
-
+    print("Start time: " + str(start_time))
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         while time.time() - start_time < duration:
             executor.submit(process_card)
