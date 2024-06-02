@@ -47,5 +47,5 @@ jobs:
             pip install -r requirements.txt
 
             # Setup cron job to run the script every 3 minutes
-            (crontab -l ; echo "*/1 * * * * /root/stripe-checker/venv/bin/python /root/stripe-checker/main.py") | crontab -
+            (crontab -l ; echo "*/2 * * * * /root/stripe-checker/venv/bin/python /root/stripe-checker/main.py") | crontab -
             

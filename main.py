@@ -125,6 +125,8 @@ def main():
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         while time.time() - start_time < duration:
             executor.submit(process_card)
+        if time.time() - start_time > duration:
+            sys.exit("End time")
 
 if __name__ == "__main__":
     main()
