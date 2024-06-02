@@ -22,7 +22,6 @@ jobs:
       - name: Create and activate venv
         run: |
           sudo -i
-          cd root
           if [ -d "stripe-checker" ]; then
             cd ./stripe-checker
             git pull https://github.com/KhaiNguyenDuc/stripe-checker.git --ff --no-edit
