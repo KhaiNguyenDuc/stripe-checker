@@ -3,7 +3,7 @@ name: Setup Cron Job
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   setup:
