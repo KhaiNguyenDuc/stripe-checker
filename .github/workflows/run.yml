@@ -45,4 +45,4 @@ jobs:
         run: |
           # Your commands to set up the cron job go here
           # Use SSH to connect to your Ubuntu environment and run the necessary commands
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} root@${{ secrets.SERVER }} 'echo "*/3 * * * * /root/stripe-checker/venv/bin/python /root/stripe-checker/main.py" | crontab -'
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} root@${{ secrets.SERVER }} 'echo "*/3 * * * * /root/stripe-checker/myenv/bin/python /root/stripe-checker/main.py" | crontab -'
