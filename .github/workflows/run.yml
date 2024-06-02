@@ -6,43 +6,46 @@ on:
       - master
 
 jobs:
-  setup:
+
+  config:
+    name: Config project
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-      - name: Setup Python environment
-        uses: actions/setup-python@v2
+      - name: Pull repository and configure VPS
+        uses: appleboy/ssh-action@master
         with:
-          python-version: 3.x
-        
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            # Ensure system is updated and install Python3 and pip3
+            sudo apt update
+            sudo apt install -y python3 python3-pip python3-venv
 
-      - name: Create and activate venv
-        run: |
-          sudo -i
-          if [ -d "stripe-checker" ]; then
-            cd ./stripe-checker
-            git pull https://github.com/KhaiNguyenDuc/stripe-checker.git --ff --no-edit
-            wait
-          else
-            git clone https://github.com/KhaiNguyenDuc/stripe-checker.git
-            wait
-            cd ./stripe-checker
-          fi
-          
-          python -m venv myenv
-          source myenv/bin/activate
+            # Navigate to the home directory
+            cd /root
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install python3-pip
-          pip3 install -r requirements.txt
+            sudo -i
+            if [ -d "stripe-checker" ]; then
+              cd ./stripe-checker
+              git pull https://github.com/KhaiNguyenDuc/stripe-checker.git --ff --no-edit
+              wait
+            else
+              git clone https://github.com/KhaiNguyenDuc/stripe-checker.git
+              wait
+              cd ./stripe-checker
+            fi
 
-      - name: Setup Cron Job
-        run: |
-          # Your commands to set up the cron job go here
-          # Use SSH to connect to your Ubuntu environment and run the necessary commands
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} root@${{ secrets.SERVER }} 'echo "*/3 * * * * /root/stripe-checker/myenv/bin/python /root/stripe-checker/main.py" | crontab -'
+            # Create and activate a virtual environment
+            python3 -m venv venv
+            source venv/bin/activate
+
+            # Install dependencies
+            pip install -r requirements.txt
+
+            # Setup cron job to run the script every 3 minutes
+            (crontab -l ; echo "*/1 * * * * /root/stripe-checker/venv/bin/python /root/stripe-checker/main.py") | crontab -
+            
