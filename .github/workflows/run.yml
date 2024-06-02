@@ -1,0 +1,36 @@
+name: Setup Cron Job
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Create and activate venv
+        run: |
+          python -m venv myenv
+          source myenv/bin/activate
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install python3-pip
+          pip3 install -r requirement.txt
+
+      - name: Setup Cron Job
+        run: |
+          # Your commands to set up the cron job go here
+          # Use SSH to connect to your Ubuntu environment and run the necessary commands
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} root@${{ secrets.SERVER }} 'echo "*/3 * * * * /root/stripe-checker/venv/bin/python /root/stripe-checker/main.py" | crontab -'
